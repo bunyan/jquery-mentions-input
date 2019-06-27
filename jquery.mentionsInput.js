@@ -109,14 +109,19 @@
 
             elmInputBox.attr('data-mentions-input', 'true'); //Sets the attribute data-mentions-input to true -> Defines if the text area is already configured
             elmInputBox.bind('keydown', onInputBoxKeyDown); //Bind the keydown event to the text area
-            elmInputBox.bind('keypress', onInputBoxKeyPress); //Bind the keypress event to the text area
             elmInputBox.bind('click', onInputBoxClick); //Bind the click event to the text area
             elmInputBox.bind('blur', onInputBoxBlur); //Bind the blur event to the text area
 
-            if (navigator.userAgent.indexOf("MSIE 8") > -1) {
-                elmInputBox.bind('propertychange', onInputBoxInput); //IE8 won't fire the input event, so let's bind to the propertychange
+            if(isAndroid()) {
+                elmInputBox.bind('keyup', onInputBoxKeyPress);
+                elmInputBox.bind('keyup', onInputBoxInput);
             } else {
-                elmInputBox.bind('input', onInputBoxInput); //Bind the input event to the text area
+                elmInputBox.bind('keypress', onInputBoxKeyPress); //Bind the keypress event to the text area
+                if (navigator.userAgent.indexOf("MSIE 8") > -1) {
+                    elmInputBox.bind('propertychange', onInputBoxInput); //IE8 won't fire the input event, so let's bind to the propertychange
+                } else {
+                    elmInputBox.bind('input', onInputBoxInput); //Bind the input event to the text area
+                }
             }
 
             // Elastic textareas, grow automatically
@@ -127,6 +132,14 @@
 
         function isAndroid() {
             return navigator.userAgent.toLowerCase().indexOf("android") > -1;
+        }
+
+        function typedValue(e) {
+            if(isAndroid()) {
+                return e.target.value.charAt(e.target.selectionStart - 1);
+            } else {
+                return String.fromCharCode(e.which || e.keyCode);
+            }
         }
 
         //Initializes the autocomplete list, append to elmWrapperBox and delegate the mousedown event to li elements
@@ -328,8 +341,7 @@
         //Takes the keypress event
         function onInputBoxKeyPress(e) {
             if(e.keyCode !== KEY.BACKSPACE) { //If the key pressed is not the backspace
-                var typedValue = String.fromCharCode(e.which || e.keyCode); //Takes the string that represent this CharCode
-                inputBuffer.push(typedValue); //Push the value pressed into inputBuffer
+                inputBuffer.push(typedValue(e)); //Push the value pressed into inputBuffer
             }
         }
 
