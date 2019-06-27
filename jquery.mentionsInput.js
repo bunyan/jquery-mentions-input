@@ -125,6 +125,10 @@
             }
         }
 
+        function isAndroid() {
+            return navigator.userAgent.toLowerCase().indexOf("android") > -1;
+        }
+
         //Initializes the autocomplete list, append to elmWrapperBox and delegate the mousedown event to li elements
         function initAutocomplete() {
             elmAutocompleteList = $(settings.templates.autocompleteList()); //Get the HTML code for the list
