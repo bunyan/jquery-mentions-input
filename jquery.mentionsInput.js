@@ -242,6 +242,10 @@
             updateValues();
 
             // Set correct focus and selection
+            if(isAndroid()) {
+                // fool the prediction system on Android devices by moving the focus out of the input
+                elmInputBox.blur();
+            }
             elmInputBox.focus();
             utils.setCaratPosition(elmInputBox[0], startEndIndex);
         }
